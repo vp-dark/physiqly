@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Physiqly - Fitness Analytics Dashboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f1115;
+        color: #ffffff;
+    }
+
+    header {
+        text-align: center;
+        padding: 20px;
+        background: #151922;
+        font-size: 28px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: #1a1f2b;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #7cc4ff;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: none;
+        background: #0f1115;
+        color: white;
+    }
+
+    button {
+        padding: 10px;
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        background: #4cafef;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #3aa0e0;
+    }
+
+    .result {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #7CFFB2;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>Physiqly - Fitness Analytics Dashboard</header>
+
+<div class="container">
+
+<div class="card">
+    <h2>Body Metrics Input</h2>
+
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <input type="number" id="age" placeholder="Age">
+    <select id="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select>
+
+    <input type="number" id="waist" placeholder="Waist (cm)">
+    <input type="number" id="hip" placeholder="Hip (cm)">
+
+    <input type="number" id="pushups" placeholder="Max Push-ups">
+    <input type="number" id="run" placeholder="1km Run Time (minutes)">
+
+    <button onclick="calculate()">Generate Fitness Report</button>
+</div>
+
+<div class="grid">
+
+<div class="card">
+    <h2>BMI</h2>
+    <div class="result" id="bmi"></div>
+</div>
+
+<div class="card">
+    <h2>BMR</h2>
+    <div class="result" id="bmr"></div>
+</div>
+
+<div class="card">
+    <h2>TDEE</h2>
+    <div class="result" id="tdee"></div>
+</div>
+
+<div class="card">
+    <h2>Body Fat % (Estimate)</h2>
+    <div class="result" id="bf"></div>
+</div>
+
+<div class="card">
+    <h2>Waist-Hip Ratio</h2>
+    <div class="result" id="whr"></div>
+</div>
+
+<div class="card">
+    <h2>Lean Body Mass</h2>
+    <div class="result" id="lbm"></div>
+</div>
+
+<div class="card">
+    <h2>VO₂ Max (Estimate)</h2>
+    <div class="result" id="vo2"></div>
+</div>
+
+<div class="card">
+    <h2>Strength Score</h2>
+    <div class="result" id="strength"></div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+function calculate() {
+    let weight = parseFloat(document.getElementById("weight").value);
+    let height = parseFloat(document.getElementById("height").value);
+    let age = parseFloat(document.getElementById("age").value);
+    let gender = document.getElementById("gender").value;
+    let waist = parseFloat(document.getElementById("waist").value);
+    let hip = parseFloat(document.getElementById("hip").value);
+    let pushups = parseFloat(document.getElementById("pushups").value);
+    let run = parseFloat(document.getElementById("run").value);
+
+    // BMI
+    let bmi = weight / ((height/100) ** 2);
+
+    // BMR (Mifflin-St Jeor)
+    let bmr = (gender === "male")
+        ? 10*weight + 6.25*height - 5*age + 5
+        : 10*weight + 6.25*height - 5*age - 161;
+
+    // TDEE (moderate activity multiplier)
+    let tdee = bmr * 1.55;
+
+    // Body Fat estimate (simple BMI-based formula)
+    let bf = (1.20 * bmi) + (0.23 * age) - (10.8 * (gender === "male" ? 1 : 0)) - 5.4;
+
+    // WHR
+    let whr = waist / hip;
+
+    // Lean body mass
+    let lbm = weight * (1 - bf/100);
+
+    // VO2 max estimate
+    let vo2 = 15.3 * (220 / run);
+
+    // Strength score
+    let strength = (pushups * 2) + (100 / run);
+
+    document.getElementById("bmi").innerText = bmi.toFixed(1);
+    document.getElementById("bmr").innerText = bmr.toFixed(0) + " kcal/day";
+    document.getElementById("tdee").innerText = tdee.toFixed(0) + " kcal/day";
+    document.getElementById("bf").innerText = bf.toFixed(1) + " %";
+    document.getElementById("whr").innerText = whr.toFixed(2);
+    document.getElementById("lbm").innerText = lbm.toFixed(1) + " kg";
+    document.getElementById("vo2").innerText = vo2.toFixed(1);
+    document.getElementById("strength").innerText = strength.toFixed(1);
+}
+</script>
+
+</body>
+</html>
